@@ -9,7 +9,7 @@ namespace LazyCollections;
 /// <typeparam name="TCollection">The underlying backing store for the enumerated contents</typeparam>
 internal class LazyEnumerator<TContents, TCollection> : IEnumerator<TContents> where TCollection : ICollection<TContents>, new()
 {
-    private IEnumerator<TContents>? _collectionEnumerator;
+    private readonly IEnumerator<TContents> _collectionEnumerator;
     private readonly IEnumerator<TContents> _original;
 
     /// <summary>
@@ -34,21 +34,20 @@ internal class LazyEnumerator<TContents, TCollection> : IEnumerator<TContents> w
     {
         _original = original;
         Collection = cache;
-        Reset();
+        _collectionEnumerator = Collection.GetEnumerator();
+        _readingFromCollection = true;
     }
 
     /// <inheritdoc />
     public bool MoveNext()
     {
-        if (_readingFromCollection && _collectionEnumerator!.MoveNext())
+        if (_readingFromCollection && _collectionEnumerator.MoveNext())
         {
-            Current = _collectionEnumerator.Current;
             return true;
         }
 
         _readingFromCollection = false;
         bool ret = _original.MoveNext();
-        Current = _original.Current;
         if (ret)
         {
             Collection.Add(Current);
@@ -64,24 +63,22 @@ internal class LazyEnumerator<TContents, TCollection> : IEnumerator<TContents> w
     /// <inheritdoc />
     public void Reset()
     {
-        _collectionEnumerator?.Dispose();
-        _collectionEnumerator = Collection.GetEnumerator();
+        _collectionEnumerator.Reset();
         _readingFromCollection = true;
-        Current = default;
     }
 
     /// <inheritdoc />
-    public TContents? Current { get; private set; }
+    public TContents Current => _readingFromCollection ? _collectionEnumerator.Current : _original.Current;
 
     /// <inheritdoc />
-    object IEnumerator.Current => Current;
+    object IEnumerator.Current => Current!; // Suppress the warning - we want the return from this to be identical to the above
 
     /// <inheritdoc />
     public void Dispose()
     {
         _original.Dispose();
-        _collectionEnumerator?.Dispose();
+        _collectionEnumerator.Dispose();
     }
 
-    public LazyEnumerator<TContents, TCollection> Clone() => new(_original, Collection);
+    public LazyEnumerator<TContents, TCollection> StartNew() => new(_original, Collection);
 }
