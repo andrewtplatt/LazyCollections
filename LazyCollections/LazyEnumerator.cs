@@ -35,6 +35,7 @@ internal class LazyEnumerator<TContents, TCollection> : IEnumerator<TContents> w
         _original = original;
         Collection = cache;
         _collectionEnumerator = Collection.GetEnumerator();
+        Current = _collectionEnumerator.Current;
         _readingFromCollection = true;
     }
 
@@ -71,10 +72,10 @@ internal class LazyEnumerator<TContents, TCollection> : IEnumerator<TContents> w
     }
 
     /// <inheritdoc />
-    public TContents? Current { get; private set; }
+    public TContents Current { get; private set; }
 
     /// <inheritdoc />
-    object IEnumerator.Current => Current;
+    object IEnumerator.Current => Current!; // Suppress the warning - we want the return from this to be identical to the above
 
     /// <inheritdoc />
     public void Dispose()
