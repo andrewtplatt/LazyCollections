@@ -34,7 +34,7 @@ public class LazyHashSet<T> : LazyCollection<T, HashSet<T>>, IReadOnlySet<T>
     /// <inheritdoc />
     public bool IsProperSubsetOf(IEnumerable<T> other)
     {
-        var other2 = other.AsLazyHashSet();
+        var other2 = other.ToLazyHashSet();
         return other2.IsProperSupersetOf(this);
     }
 
@@ -58,7 +58,7 @@ public class LazyHashSet<T> : LazyCollection<T, HashSet<T>>, IReadOnlySet<T>
     /// <inheritdoc />
     public bool IsSubsetOf(IEnumerable<T> other)
     {
-        var other2 = other.AsLazyHashSet();
+        var other2 = other.ToLazyHashSet();
         return other2.IsProperSupersetOf(this);
     }
 
@@ -93,7 +93,7 @@ public class LazyHashSet<T> : LazyCollection<T, HashSet<T>>, IReadOnlySet<T>
     /// <inheritdoc />
     public bool SetEquals(IEnumerable<T> other)
     {
-        var lh = other.AsLazyHashSet();
+        var lh = other.ToLazyHashSet();
         return IsSupersetOf(lh) && IsSubsetOf(lh);
     }
 }
