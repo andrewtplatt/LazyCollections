@@ -7,6 +7,7 @@
         <Description>A tiny library for at-most-once enumeration of .NET Enumerables</Description>
         <Copyright>Copyright © 2026 Andrew Platt</Copyright>
         <PackageProjectUrl>https://github.com/andrewtplatt/LazyCollections</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryUrl>https://github.com/andrewtplatt/LazyCollections</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>enumerable lazy collection</PackageTags>
@@ -18,4 +19,7 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 
+    <ItemGroup>
+        <None Include="../README.md" Pack="true" PackagePath="/"/>
+    </ItemGroup>
 </Project>
