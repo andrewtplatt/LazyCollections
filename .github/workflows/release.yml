@@ -1,0 +1,45 @@
+name: Publish NuGet Package on Release
+
+on:
+  workflow_dispatch:
+  release:
+    types:
+      - published
+
+env:
+  NuGetDirectory: ${{ github.workspace }}/nuget
+jobs:
+  build-and-publish:
+    permissions:
+      id-token: write  # enable GitHub OIDC token issuance for this job
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.x.x
+            9.x.x
+            10.x.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore -c Release
+      - name: Test
+        run: dotnet test --no-build -c Release --verbosity normal
+      - name: Pack
+        run: dotnet pack --no-build -c Release --output ${{ env.NuGetDirectory }}
+
+    
+      # Get a short-lived NuGet API key
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+    
+      # Push the package
+      - name: NuGet push
+        run: dotnet nuget push ${{ env.NuGetDirectory }}/Plattipus.LazyCollections.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
