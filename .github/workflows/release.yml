@@ -42,4 +42,10 @@ jobs:
     
       # Push the package
       - name: NuGet push
-        run: dotnet nuget push ${{ env.NuGetDirectory }}/Plattipus.LazyCollections.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+        run: |
+          for pkg in ${{ env.NuGetDirectory }}/Plattipus.*.nupkg; do
+            if [ -f "$pkg" ]; then
+              echo "Pushing $pkg"
+              dotnet nuget push "$pkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+            fi
+          done
