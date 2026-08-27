@@ -8,6 +8,7 @@
         <Copyright>Copyright © 2026 Andrew Platt</Copyright>
         <PackageProjectUrl>https://github.com/andrewtplatt/LazyCollections</PackageProjectUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <RepositoryUrl>https://github.com/andrewtplatt/LazyCollections</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>enumerable lazy collection</PackageTags>
@@ -21,5 +22,6 @@
 
     <ItemGroup>
         <None Include="../README.md" Pack="true" PackagePath="/"/>
+        <None Include="../LICENSE" Pack="true" PackagePath="/"/>
     </ItemGroup>
 </Project>
