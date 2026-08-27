@@ -29,10 +29,19 @@ jobs:
         run: dotnet build --no-restore -c Release
       - name: Test
         run: dotnet test --no-build -c Release --verbosity normal
-      - name: Pack
-        run: dotnet pack --no-build -c Release --output ${{ env.NuGetDirectory }}
+      
 
-    
+      - name: Extract version from tag
+        id: version
+        run: |
+          # Strip the leading 'v' prefix: v1.2.3 -> 1.2.3
+          RELEASE_NAME="${{ github.event.release.name }}"
+          VERSION="${RELEASE_NAME#v}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Packaging version: $VERSION"
+      - name: Pack
+        run: dotnet pack --no-build -c Release -p:PackageVersion=${{ steps.version.outputs.version }} --output ${{ env.NuGetDirectory }}
+      
       # Get a short-lived NuGet API key
       - name: NuGet login
         uses: NuGet/login@v1
@@ -43,9 +52,9 @@ jobs:
       # Push the package
       - name: NuGet push
         run: |
+          ls -la ${{ env.NuGetDirectory }}
           for pkg in ${{ env.NuGetDirectory }}/Plattipus.*.nupkg; do
             if [ -f "$pkg" ]; then
-              echo "Pushing $pkg"
-              dotnet nuget push "$pkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+              dotnet nuget push "$pkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
             fi
           done
