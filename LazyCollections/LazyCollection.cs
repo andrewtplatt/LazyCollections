@@ -7,7 +7,7 @@ namespace LazyCollections;
 /// </summary>
 /// <typeparam name="TContents">The type of the contents of the collection</typeparam>
 /// <typeparam name="TCollection">The type of the underlying backing store for the collection</typeparam>
-public abstract class LazyCollection<TContents, TCollection> : ILazyCollection<TContents> 
+public abstract class LazyCollection<TContents, TCollection> : ILazyCollection<TContents>
     where TCollection : ICollection<TContents>, new()
 {
     private readonly LazyEnumerator<TContents, TCollection> _enumerator;

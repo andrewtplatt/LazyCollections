@@ -19,7 +19,7 @@ public static class LazyCollection
         }
         return new LazyHashSet<T>(enumerable);
     }
-    
+
     /// <summary>
     /// Create a new <see cref="LazyList{T}"/> from the given enumerable.
     /// </summary>
@@ -61,6 +61,17 @@ public static class LazyCollection
         where TKey : notnull
     {
         return new LazyDictionary<TKey, TValue>(enumerable.Select(x => KeyValuePair.Create(keySelector(x), valueSelector(x))));
+    }
+
+    /// <summary>
+    /// Create a new <see cref="LazyLinkedList{T}"/> from the given enumerable.
+    /// </summary>
+    /// <param name="enumerable">The enumerable to enumerate lazily</param>
+    /// <typeparam name="T">The type of enumerable contents</typeparam>
+    /// <returns>A new instance of <see cref="LazyLinkedList{T}"/></returns>
+    public static LazyLinkedList<T> ToLazyLinkedList<T>(this IEnumerable<T> enumerable)
+    {
+        return new LazyLinkedList<T>(enumerable);
     }
 
     /// <summary>
