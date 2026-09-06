@@ -20,11 +20,18 @@ public abstract class LazyCollectionTests<TLazy, TBase>
         using var lazily = lazy.GetEnumerator();
         while (groundTruth.MoveNext())
         {
-            Assert.That(lazily.MoveNext());
-            Assert.That(groundTruth.Current, Is.EqualTo(lazily.Current));
+            Assert.Multiple(() =>
+            {
+                Assert.That(lazily.MoveNext());
+                Assert.That(groundTruth.Current, Is.EqualTo(lazily.Current));
+            });
         }
-        Assert.That(!lazily.MoveNext());
-        Assert.That(lazy.ToList(), Is.EqualTo(input.ToList()));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(!lazily.MoveNext());
+            Assert.That(lazy.ToList(), Is.EqualTo(input.ToList()));
+        });
     }
 
     [Test]
@@ -43,7 +50,7 @@ public abstract class LazyCollectionTests<TLazy, TBase>
         var lazy = Create(input);
         Assert.Throws<TestException>(() => lazy.ToList());
     }
-    
+
     [Test]
     public void TestWhenInputEnumeratorThrowsOnMultipleEnumeration_LazyCollectionDoesNotThrow()
     {
